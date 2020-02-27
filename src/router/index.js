@@ -5,12 +5,11 @@ const Home = () => import('views/home/Home')
 const Cart = () => import('views/cart/Cart')
 const CateGory = () => import('views/category/CateGory')
 const Profile = () => import('views/profile/Profile')
-
-
+const Detail = () => import('views/details/Detail')
 Vue.use(VueRouter)
 const routes = [
   {
-    path:'',
+    path:'/',
     redirect:'/home'
   },
   {
@@ -28,12 +27,15 @@ const routes = [
   {
     path:'/profile',
     component:Profile
+  },
+  {
+    path:'/detail/:iid',
+    component:Detail
   }
 ]
 
 const router = new VueRouter({
-  routes,
-  mode:'history'
+  routes
 })
 
 export  default router

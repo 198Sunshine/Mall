@@ -17,8 +17,8 @@
     bottom: 55px;
   }
   .back-top img{
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     opacity: 0.8;
   }
 </style>

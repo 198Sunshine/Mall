@@ -13,13 +13,13 @@
     <Bscroll
         class="content" ref="Bscroll"
         :probeType ="3"
-        @scroll="scrollBack($event,1200)"
+        @scroll="scrollBack($event,1000)"
         :pullUpLoad="true"
         @pullLoad="pullLoad"
     >
       <!--传入的1200为多少距离显示箭头图-->
       <home-swiper :banners="banners"  @imgSwiperLoad="imgSwiperLoad"/>
-      <RecommendView :recommends="recommends" refs="recom"/>
+      <RecommendView :recommends="recommends"/>
       <feature-view/>
       <tab-control
           :titles="['流行','新款','精选']"
@@ -31,7 +31,6 @@
     </Bscroll>
     <!-- .native 监听原生根元素-->
     <BackTop @click.native="backTop" v-show="isShow"/>
-    <p>hello</p>
   </div>
 </template>
 
@@ -45,12 +44,10 @@
   import NavBar from "components/common/navbar/NavBar"
   import TabControl from "components/content/tabControl/TabControl"
   import Commodity from "components/content/commodity/Commodity"
-  import BackTop from "components/content/backtop/BackTop";
   //其他方法
   import {getHomeMultidata ,getHomeCommodity} from "network/home"
-  import { debounce } from "common/utils";
-
   import Bscroll from "components/common/bscroll/Bscroll"
+  import {imgload,backTop} from "../../common/mixin";
 
   export default {
     name: 'Home',
@@ -58,15 +55,13 @@
       HomeSwiper,
       RecommendView,
       FeatureView,
-
       NavBar,
       TabControl,
       Commodity,
-      BackTop,
-
       Bscroll,
 
     },
+    mixins:[imgload,backTop],
     data(){
       return {
         //保存请求数据
@@ -79,7 +74,6 @@
        },
         currentType:'pop',
         //设置默认isShow为false
-        isShow:false,
         offsetTop: 0,
         isTabFixed:false,
         saveY:0
@@ -100,29 +94,29 @@
       this.getHomeCommodity('sell')
     },
     mounted(){
-      //防抖函数,防止频繁刷新
-      const  refresh = debounce(this.$refs.Bscroll.Refresh,500)
-
-      //当commodity组件图片加载完成接收
-      this.$bus.$on('imageLoad',() => {
-        //重新获取scrollHeight高度
-        //this.$refs.Bscroll.refersh()
-        //防抖函数
-        refresh()
-      })
-    },
-    destroyed(){
-      console.log('---');
+      // //防抖函数,防止频繁刷新
+      // let  refresh = debounce(this.$refs.Bscroll.Refresh,500)
+      //
+      // //当commodity组件图片加载完成接收
+      // this.$bus.$on('imgItemLoad',() => {
+      //   //重新获取scrollHeight高度
+      //   //this.$refs.Bscroll.refersh()
+      //   //防抖函数
+      //   refresh
+      // })
     },
     activated(){
-      console.log(this.saveY);
+      //console.log(this.saveY);
       this.$refs.Bscroll.Refresh()
       this.$refs.Bscroll.scrollTop(0,this.saveY,0)
     },
     deactivated(){
       //记录离开时的位置
       this.saveY = this.$refs.Bscroll.getScrollY()
-      console.log(this.saveY);
+      //console.log(this.saveY);
+
+      //取消全局监听
+      this.$bus.$off('imgItemLoad',this.imageLoadListen)
     },
     methods:{
       tabClick(index){
@@ -168,15 +162,9 @@
             this.$refs.Bscroll.finishPullup()
         })
       },
-      backTop() {
-        //坐标，时间
-        this.$refs.Bscroll.scrollTop(0,0,1000)
-      },
-      //当pos的负值大于传入的y时，isShow显示为true
       scrollBack(pos,y){
-        this.isShow = -pos.y > y
-
         this.isTabFixed = -pos.y > this.offsetTop - 44
+        this.listenBackTop(pos,y)
       },
       pullLoad(){
         this.getHomeCommodity(this.currentType)
@@ -209,10 +197,14 @@
   }
   .tabcontrol{
     /*当高度达到设置时，position改成 fixed*/
-    position: relative;
+    /*position: absolute;*/
+    /*margin-top:50px;*/
+    /*left: 0;*/
+    /*right:0;*/
+    position: fixed;
     top: 44px;
     left: 0;
-    right:0;
+    right: 0;
   }
   .content{
     position: absolute;

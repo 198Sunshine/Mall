@@ -1,10 +1,9 @@
 <template>
   <div id="app">
-    <MainTabItem/>
-    <keep-alive>
+    <main-tab-item/>
+    <keep-alive include="Home">
       <router-view/>
     </keep-alive>
-
   </div>
 </template>
 

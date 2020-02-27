@@ -42,7 +42,7 @@
       }),
         //3.滚动到底部监听
           this.scroll.on('pullingUp',() => {
-            console.log('再拉就秃了')
+            //console.log('再拉就秃了')
             if(this.pullUpLoad){
               this.$emit('pullLoad')
             }
@@ -53,7 +53,7 @@
        this.scroll && this.scroll.scrollTo(x,y,time)
       },
      finishPullup(){
-       this.scroll &&   this.scroll.finishPullUp()
+       this.scroll && this.scroll.finishPullUp()
      },
       //解决加载图片卡顿问题
       Refresh(){

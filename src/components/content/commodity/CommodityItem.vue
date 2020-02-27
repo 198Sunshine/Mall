@@ -1,7 +1,8 @@
 <template>
-  <div class="com-item">
+  <div class="com-item" @click="itemClick">
     <!--@load 监听图片加载完成-->
-    <img :src="comItemlist.show.img" @load="imgItemLoad">
+    <!--    v-lazy:路由懒加载-->
+    <img v-lazy="showImg" @load="imgItemLoad">
     <div class="com-item-list">
       <p>{{comItemlist.title}}</p>
       <div>
@@ -23,12 +24,18 @@
         }
       }
     },
+    computed:{
+      showImg(){
+        return this.comItemlist.image || this.comItemlist.show.img
+      }
+    },
     methods:{
       imgItemLoad(){
         //当图片加载完成发射给Home组件
-        this.$bus.$emit('imageload',() => {
-
-        })
+        this.$bus.$emit('imgItemLoad')
+      },
+      itemClick(){
+        this.$router.push('/detail/'+this.comItemlist.iid)
       }
     }
   }
@@ -63,7 +70,8 @@
 
   .com-item img {
     width: 100%;
-    height: 200px;
+    /*height: 200px;*/
+    height: 100%;
     border-radius: 3px;
   }
 
